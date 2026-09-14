@@ -16848,7 +16848,15 @@ async function runVintedVideoGeneration(prompt, refs, runSettings, node){
     const resume = !!state.vintedOperationId;
     if(!resume){
         if(refs.some(ref => !['image'].includes(mediaKindForItem(ref)))) throw new Error('Vinted 只接受参考图片，不支持视频和音频');
-        state.vintedOperationId = crypto.randomUUID().replace(/-/g, '');
+        if(typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'){
+            state.vintedOperationId = crypto.randomUUID().replace(/-/g, '');
+        } else if(typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function'){
+            // getRandomValues also works on HTTP; retain the backend's 32-hex operation format.
+            state.vintedOperationId = Array.from(crypto.getRandomValues(new Uint8Array(16)),
+                byte => byte.toString(16).padStart(2, '0')).join('');
+        } else {
+            throw new Error('浏览器不支持安全随机数，请使用新版 Chrome 或 Edge 打开画布');
+        }
         state.vintedStatus = '正在提交';
         try { await queueCanvasSave(); }
         catch(error) { delete liveSmartNode(state).vintedOperationId; throw error; }

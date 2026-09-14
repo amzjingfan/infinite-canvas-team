@@ -43,6 +43,29 @@ test('Vinted does not submit when the canvas cannot persist its operation',async
     await assert.rejects(ctx.runVintedVideoGeneration('test',[],{videoProvider:'vinted'},ctx.node),/save failed/);
     assert.equal(ctx.calls.length,0);assert.equal(ctx.node.vintedOperationId,undefined);
 });
+
+test('Vinted submits and resumes without randomUUID in an HTTP browser context',async()=>{
+    const ctx=setup();
+    const webcrypto=require('node:crypto').webcrypto;
+    ctx.crypto={getRandomValues:webcrypto.getRandomValues.bind(webcrypto)};
+    await ctx.runVintedVideoGeneration('test',[],{videoProvider:'vinted'},ctx.node);
+    const first=ctx.node.vintedOperationId;
+    assert.match(first,/^[0-9a-f]{32}$/);
+    assert.equal(ctx.calls[0],'save');
+    assert.equal(ctx.calls[1].body.vinted_operation_id,first);
+    await ctx.runVintedVideoGeneration('',[],{},ctx.node);
+    assert.equal(ctx.calls[2].url,`/api/vinted/operations/${first}/resume`);
+    ctx.node={id:'another',images:[]};
+    await ctx.runVintedVideoGeneration('test',[],{videoProvider:'vinted'},ctx.node);
+    assert.notEqual(ctx.node.vintedOperationId,first);
+});
+
+test('Vinted reports unsupported randomness before saving or submitting',async()=>{
+    const ctx=setup();delete ctx.crypto;
+    await assert.rejects(ctx.runVintedVideoGeneration('test',[],{videoProvider:'vinted'},ctx.node),/安全随机数/);
+    assert.equal(ctx.calls.length,0);
+    assert.equal(ctx.node.vintedOperationId,undefined);
+});
 test('The real result finalizer releases a Vinted operation only after attaching video',()=>{
     const ctx=setup();ctx.node.vintedOperationId='a'.repeat(32);
     Object.assign(ctx,{nodes:[ctx.node],cleanHistoryImages:x=>x,copyMediaSizeFields:(a,b)=>b,

@@ -1,10 +1,10 @@
 {
-  "version": "2026.09.14.2",
+  "version": "2026.09.14.3",
   "updated_at": "2026-09-14T16:00:00+08:00",
   "items": [
     {
       "type": "feature",
-      "text": "团队仓库公开：更新无需 GitHub CLI 或登录。新增旧打包版原地过渡脚本，兼容旧版启动失败回退，保留画布、素材和平台密钥。"
+      "text": "修复 Vinted 生视频报错 crypto.randomUUID is not a function：兼容没有 randomUUID 的浏览器环境，保留提交前保存任务和中断后继续查询机制。无需重装或重新填写密钥。"
     }
   ]
 }
