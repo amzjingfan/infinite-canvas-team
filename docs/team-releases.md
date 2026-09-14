@@ -8,10 +8,6 @@
 
 无需邀请、GitHub 账号或 GitHub CLI，直接下载公开 Release 即可。公开内容不包含平台密钥和个人资料。
 
-## 已安装旧打包版：只做一次过渡升级
-
-**不卸载、不把新安装包覆盖到旧目录。** 请阅读 [旧版过渡升级与 Codex 提示词](transition-upgrade.md)。脚本在原目录更新程序，保留原密钥，无需同事重新填写。
-
 在 Releases 下载 `infinite-canvas-windows-x64.zip` 和校验文件，解压到固定的新目录，然后让 Codex 执行：
 
 ```powershell
@@ -21,6 +17,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\deploy\install.p
 包内有 Python 运行环境和公共图片风格库，不包含任何平台密钥、画布、素材、对话或 Codex 登录。已有独立平台密钥文档可通过受控方式交给同事放到根目录 PRIVATE-API-KEYS.txt 后由安装脚本导入；不要上传到 GitHub。不建议把新安装包解压覆盖旧目录。
 
 Codex Agent、即梦和 ComfyUI 仍需本机各自的登录/服务。网页启动成功不等于外部工具均已可用。
+
+## 已安装旧打包版：只做一次过渡升级
+
+**不卸载、不把新安装包覆盖到旧目录。** 请阅读 [旧版过渡升级与 Codex 提示词](transition-upgrade.md)。脚本在原目录更新程序，保留原密钥，无需同事重新填写。
 
 ## 日常更新
 
