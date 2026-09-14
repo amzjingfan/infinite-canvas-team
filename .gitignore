@@ -1,0 +1,26 @@
+API/autodl.local.json
+autodl-server.*.log
+/dist/
+
+# Local credentials and user data. Tracked history must NOT be published as-is.
+/API/
+/data/
+/assets/
+/output/
+/history.json
+/global_config.json
+/logs/
+*.log
+**/__pycache__/
+*.py[cod]
+.env
+.env.*
+PRIVATE-API-KEYS.txt
+*_PRIVATE_*
+*-PRIVATE-*
+
+# Machine-specific runtimes and generated artifacts, not application source.
+/python/
+/packages/
+/_self_restart.*
+/resources/

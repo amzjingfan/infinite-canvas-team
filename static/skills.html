@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills · AI Studio</title>
+    <script src="/static/js/theme.js?v=2026.08.28.1788750900"></script>
+    <link rel="stylesheet" href="/static/css/skills.css?v=2026.08.28.1788946601">
+</head>
+<body class="skills-page">
+    <main>
+        <header><div><h1>Skills</h1><p>选择可在对话中通过 <code>/</code> 调用的技能。</p></div><button type="button" id="skillsRefresh">刷新列表</button></header>
+        <div class="skills-toolbar">
+            <input id="skillsSearch" class="skills-search" type="search" placeholder="搜索技能名称或简介…" aria-label="搜索技能">
+            <button type="button" id="skillsSelectAll" disabled>全选</button>
+            <button type="button" id="skillsClearAll" disabled>取消全选</button>
+        </div>
+        <div class="skills-summary"><span id="skillsCount">正在读取技能…</span><span id="skillsSaveStatus" class="skills-save-status" role="status" aria-live="polite"></span></div>
+        <section id="skillsCatalog" class="skills-catalog" aria-label="技能列表"></section>
+        <p class="skills-help">勾选设置在 GPT 对话和画布 Agent 中共用。全选针对全部技能，不受搜索条件影响；新发现的技能默认未勾选。调用会加载技能指令，工具类任务仍需要项目具备相应工具。</p>
+    </main>
+    <script src="/static/js/skills.js?v=2026.08.28.1788946671"></script>
+    <script src="/static/js/skills-page.js?v=2026.08.28.1788947195"></script>
+</body>
+</html>
