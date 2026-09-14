@@ -44,7 +44,11 @@ def build(root,out,full=False):
     # Source-only repository: tests and maintainer guide are not runtime payloads.
     shutil.copy2(root/'.gitignore',source/'.gitignore')
     shutil.copytree(root/'tests',source/'tests',ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
-    (source/'docs').mkdir();shutil.copy2(root/'docs/team-releases.md',source/'docs/team-releases.md')
+    (source/'docs').mkdir()
+    for name in ('team-releases.md','transition-upgrade.md'):
+        shutil.copy2(root/'docs'/name,source/'docs'/name)
+    shutil.copy2(root/'tools/team-release/transition-upgrade.ps1',out/'transition-upgrade.ps1')
+    shutil.copy2(root/'docs/transition-upgrade.md',out/'transition-upgrade.md')
     for p in source.rglob('*'):
         if not p.is_file(): continue
         content=p.read_bytes()

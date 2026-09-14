@@ -1,9 +1,10 @@
-"""GitHub Releases API and maintenance gate; secrets stay in each user's gh keyring."""
+"""Public GitHub Releases API and maintenance gate; no account or CLI required."""
 import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
+import urllib.request
+import urllib.parse
 import subprocess
 import sys
 import threading
@@ -14,15 +15,13 @@ from fastapi.responses import JSONResponse
 from team_update import REPO, ASSET, inspect_archive, atomic_write, busy_record
 from team_update_worker import installation_task
 
-def gh(args,timeout=45):
-    exe=shutil.which('gh') or str(Path(os.environ.get('ProgramFiles','C:/Program Files'))/'GitHub CLI/gh.exe')
+def public_get(url,timeout=45):
     try:
-        result=subprocess.run([exe,*args],capture_output=True,timeout=timeout,
-            creationflags=0x08000000 if os.name=='nt' else 0)
-    except (OSError,subprocess.TimeoutExpired):
-        raise RuntimeError('请安装 GitHub CLI，并用获仓库权限的个人账号执行 gh auth login') from None
-    if result.returncode: raise RuntimeError('GitHub 访问失败：请检查网络、gh auth login 和团队私有仓库权限')
-    return result.stdout
+        request=urllib.request.Request(url,headers={'User-Agent':'Infinite-Canvas-Team-Updater'})
+        with urllib.request.urlopen(request,timeout=timeout) as response:
+            return response.read()
+    except OSError:
+        raise RuntimeError('GitHub 下载失败：请检查网络或稍后重试（公开访问有请求频率限制），无需登录') from None
 
 def install_team_updates(app,base,busy_callback):
     root=Path(base);statusfile=root/'data/team-update/status.json'
@@ -49,7 +48,7 @@ def install_team_updates(app,base,busy_callback):
 
     def current(): return (root/'VERSION').read_text().strip()
     def latest():
-        release=json.loads(gh(['api',f'repos/{REPO}/releases/latest']))
+        release=json.loads(public_get(f'https://api.github.com/repos/{REPO}/releases/latest'))
         tag=release.get('tag_name','');version=tag.removeprefix('v')
         import re
         if not re.fullmatch(r'\d+(?:\.\d+){2,4}',version): raise RuntimeError('发布版本格式不支持')
@@ -86,7 +85,9 @@ def install_team_updates(app,base,busy_callback):
             release=latest()
             if tuple(map(int,release['version'].split('.'))) <= tuple(map(int,current().split('.'))): raise HTTPException(409,'当前已是最新版本，不需要更新')
             operation=uuid.uuid4().hex;stage=root/'data/team-update'/operation;stage.mkdir(parents=True)
-            gh(['release','download',release['tag'],'--repo',REPO,'--pattern',ASSET,'--pattern',ASSET+'.sha256','--dir',str(stage)],timeout=180)
+            for name in (ASSET,ASSET+'.sha256'):
+                url=f'https://github.com/{REPO}/releases/download/{urllib.parse.quote(release["tag"],safe="")}/{name}'
+                atomic_write(stage/name,public_get(url,timeout=180))
             archive=stage/ASSET
             expected=(stage/(ASSET+'.sha256')).read_text().split()[0].lower()
             if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected: raise RuntimeError('更新包校验失败，未替换任何程序')

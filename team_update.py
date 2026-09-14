@@ -21,7 +21,7 @@ def allowed(name):
         return name in ('VERSION','requirements.txt','LICENSE','README.md') or bool(re.fullmatch(r'[a-z][a-z0-9_]*\.py',name))
     return parts[0] in ('static','workflows') or name in (
         'tools/deploy/serve.py','tools/deploy/start-background.ps1','tools/deploy/install.ps1',
-        'tools/team-release/build.py','tools/team-release/publish.ps1')
+        'tools/team-release/build.py','tools/team-release/publish.ps1','tools/team-release/transition-upgrade.ps1')
 
 def preserve_existing(name):
     return name.startswith(('workflows/','static/runninghub/','static/system-prompts/'))

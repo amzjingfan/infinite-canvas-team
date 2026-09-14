@@ -34,8 +34,9 @@ def task_action(task,action):
 def healthy(port,version,attempts=40):
     for _ in range(attempts):
         try:
-            with urllib.request.urlopen(f'http://127.0.0.1:{port}/api/team-update/health',timeout=2) as r:
-                if json.load(r).get('version')==version: return True
+            route='/' if version is None else '/api/team-update/health'
+            with urllib.request.urlopen(f'http://127.0.0.1:{port}{route}',timeout=2) as r:
+                if (version is None and r.status==200) or (version is not None and json.load(r).get('version')==version): return True
         except Exception: pass
         time.sleep(.5)
     return False
@@ -48,7 +49,7 @@ def run(root,archive,port):
         atomic_write(statefile,json.dumps(state,ensure_ascii=False).encode())
     backup=root/'data/team-update'/('backup-'+state['operation'])
     task=None;changed=False;stopped=False
-    previous=(root/'VERSION').read_text().strip()
+    previous=None if state.get('legacy') else (root/'VERSION').read_text().strip()
     try:
         manifest,files=inspect_archive(archive)
         task=installation_task(str(root))

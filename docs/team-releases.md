@@ -1,12 +1,16 @@
 # 团队安装与更新
 
-私有仓库：https://github.com/amzjingfan/infinite-canvas-team
+公开仓库：https://github.com/amzjingfan/infinite-canvas-team
 
 本项目基于 hero8152/Infinite-Canvas，保留原作者署名和原 LICENSE。仅用于公司内部协作，不修改原许可条款。
 
 ## 同事首次安装
 
-管理员先邀请同事的 GitHub 账号访问私有仓库。同事安装 GitHub CLI 并执行 `gh auth login`，必须使用自己已获授权的账号。不要分享管理员的 GitHub 令牌。
+无需邀请、GitHub 账号或 GitHub CLI，直接下载公开 Release 即可。公开内容不包含平台密钥和个人资料。
+
+## 已安装旧打包版：只做一次过渡升级
+
+**不卸载、不把新安装包覆盖到旧目录。** 请阅读 [旧版过渡升级与 Codex 提示词](transition-upgrade.md)。脚本在原目录更新程序，保留原密钥，无需同事重新填写。
 
 在 Releases 下载 `infinite-canvas-windows-x64.zip` 和校验文件，解压到固定的新目录，然后让 Codex 执行：
 
@@ -22,7 +26,7 @@ Codex Agent、即梦和 ComfyUI 仍需本机各自的登录/服务。网页启�
 
 首页的更新入口进入“团队版本更新”；也可直接打开 `/static/team-update.html`。
 
-保存画布并完成生成/取回任务，点击“检查更新”，再点击“更新并重启”。若没有 GitHub 登录或仓库权限，页面会提示，不会自动切换到原作者更新源。
+保存画布并完成生成/取回任务，点击“检查更新”，再点击“更新并重启”。2026.09.14.2 起直接匿名下载公开版本，无需 GitHub CLI 或登录。网络不通或访问频率受限会提示稍后重试，不会切换到原作者更新源。
 
 只替换程序清单中的文件。API、data、assets、output、历史记录、机器配置均不在更新清单。已存在的 workflows、static/runninghub、static/system-prompts 文件保留本地版本；需要新版默认模板时由用户单独确认导入。不会删除没有出现在新版里的本地文件。
 
